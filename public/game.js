@@ -132,6 +132,8 @@ class Game {
   updateGameUI() {
     if (!this.gameState) return;
 
+    console.log('Game state update:', this.gameState.status, 'Scores:', this.gameState.scores);
+
     // Update scores
     const yourScoreEl = document.getElementById('yourScore');
     const opponentScoreEl = document.getElementById('opponentScore');
@@ -145,6 +147,9 @@ class Game {
     // Handle round end
     if (this.gameState.status === 'roundEnd' || this.gameState.status === 'gameOver') {
       this.showRoundEnd();
+    } else if (this.gameState.status === 'playing') {
+      // Make sure overlay is hidden when playing
+      this.hideRoundEnd();
     }
   }
 
@@ -185,6 +190,7 @@ class Game {
   }
 
   readyForNextRound() {
+    console.log('Player clicked ready button, emitting playerReady');
     this.socket.emit('playerReady');
     this.hideRoundEnd();
   }

@@ -69,6 +69,7 @@ class GameRoom {
   }
 
   startGame() {
+    console.log('Starting game, room:', this.code);
     this.gameState.status = 'playing';
     this.generateNewMap();
     this.startGameLoop();
@@ -77,11 +78,13 @@ class GameRoom {
     if (this.isSinglePlayer) {
       const aiSocketId = Array.from(this.players.keys()).find(id => id.startsWith('AI_'));
       if (aiSocketId) {
+        console.log('Starting AI controller');
         this.aiController = new AIController(this.aiDifficulty, this, aiSocketId);
         this.aiController.start();
       }
     }
 
+    console.log('Game started with status:', this.gameState.status);
     this.emitGameState();
   }
 
@@ -331,6 +334,7 @@ class GameRoom {
   }
 
   handleRoundEnd(winnerId) {
+    console.log('Round ending, winner:', winnerId);
     this.stopGameLoop();
     this.gameState.status = 'roundEnd';
 
@@ -339,10 +343,13 @@ class GameRoom {
       this.gameState.scores[winner.number]++;
       this.gameState.roundWinner = winner.number;
 
+      console.log('Scores updated:', this.gameState.scores);
+
       // Check if game is over
       if (this.gameState.scores[winner.number] >= 3) {
         this.gameState.status = 'gameOver';
         this.gameState.gameWinner = winner.number;
+        console.log('Game over! Winner:', winner.number);
       }
     }
 
@@ -351,18 +358,23 @@ class GameRoom {
   }
 
   playerReady(socketId) {
+    console.log('Player ready:', socketId);
     this.readyPlayers.add(socketId);
 
     // Auto-ready AI players
     if (this.isSinglePlayer) {
       const aiSocketId = Array.from(this.players.keys()).find(id => id.startsWith('AI_'));
       if (aiSocketId) {
+        console.log('Auto-readying AI:', aiSocketId);
         this.readyPlayers.add(aiSocketId);
       }
     }
 
+    console.log('Ready players:', this.readyPlayers.size, '/', this.players.size);
+
     if (this.readyPlayers.size === this.players.size) {
       // Both players ready, start next round or new game
+      console.log('All players ready, game status:', this.gameState.status);
       if (this.gameState.status === 'gameOver') {
         this.resetGame();
       } else {

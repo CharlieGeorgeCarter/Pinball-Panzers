@@ -4,6 +4,7 @@ class AIController {
     this.gameRoom = gameRoom;
     this.aiSocketId = aiSocketId;
     this.updateInterval = null;
+    this.startTimeout = null;
     this.lastShot = 0;
 
     // Difficulty settings
@@ -45,13 +46,20 @@ class AIController {
   }
 
   start() {
-    // Update AI behavior based on difficulty reaction time
-    this.updateInterval = setInterval(() => {
-      this.update();
-    }, this.settings.reactionTime);
+    // Add a small delay before AI starts to ensure game is fully initialized
+    this.startTimeout = setTimeout(() => {
+      // Update AI behavior based on difficulty reaction time
+      this.updateInterval = setInterval(() => {
+        this.update();
+      }, this.settings.reactionTime);
+    }, 1000); // 1 second delay before AI begins
   }
 
   stop() {
+    if (this.startTimeout) {
+      clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
