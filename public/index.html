@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Pinball Panzers - Tank Battle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Menu Screen -->
+    <div id="menuScreen" class="screen">
+        <div class="menu-container">
+            <h1 class="game-title">🎮 Pinball Panzers</h1>
+            <p class="game-subtitle">Multiplayer Tank Battle</p>
+
+            <div class="menu-buttons">
+                <button id="createRoomBtn" class="btn btn-primary">Create Room</button>
+                <button id="joinRoomBtn" class="btn btn-secondary">Join Room</button>
+            </div>
+
+            <div id="joinRoomPanel" class="join-panel hidden">
+                <input type="text" id="roomCodeInput" placeholder="Enter Room Code" maxlength="6">
+                <div class="panel-buttons">
+                    <button id="confirmJoinBtn" class="btn btn-primary">Join</button>
+                    <button id="cancelJoinBtn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>How to Play</h3>
+                <ul>
+                    <li>Create a room or join with a code</li>
+                    <li>Use controls to move your tank</li>
+                    <li>Tap FIRE to shoot bullets</li>
+                    <li>Bullets bounce off walls (max 3 times)</li>
+                    <li>First to 3 wins takes the match!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting Screen -->
+    <div id="waitingScreen" class="screen hidden">
+        <div class="waiting-container">
+            <h2>Waiting for Opponent...</h2>
+            <div class="room-code-display">
+                <p>Room Code:</p>
+                <div class="code-box" id="roomCodeDisplay"></div>
+                <button id="copyCodeBtn" class="btn btn-secondary">Copy Code</button>
+            </div>
+            <p class="waiting-text">Share this code with your friend!</p>
+            <button id="cancelWaitBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen hidden">
+        <!-- Game Info Bar -->
+        <div class="game-info">
+            <div class="score-display">
+                <div class="player-score">
+                    <span class="player-label">You</span>
+                    <span class="score" id="yourScore">0</span>
+                </div>
+                <div class="score-separator">-</div>
+                <div class="player-score">
+                    <span class="score" id="opponentScore">0</span>
+                    <span class="player-label">Opponent</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Canvas -->
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="controls-container">
+            <div class="controls-left">
+                <div class="joystick" id="moveJoystick">
+                    <div class="joystick-button">
+                        <div class="joystick-inner"></div>
+                    </div>
+                </div>
+                <span class="control-label">MOVE</span>
+            </div>
+
+            <div class="controls-right">
+                <div class="joystick" id="rotateJoystick">
+                    <div class="joystick-button">
+                        <div class="joystick-inner"></div>
+                    </div>
+                </div>
+                <span class="control-label">ROTATE</span>
+            </div>
+
+            <button id="fireBtn" class="fire-button">FIRE</button>
+        </div>
+
+        <!-- Round/Game Over Overlay -->
+        <div id="roundOverlay" class="overlay hidden">
+            <div class="overlay-content">
+                <h2 id="roundResultText"></h2>
+                <div id="finalScores" class="final-scores hidden">
+                    <p>Final Score</p>
+                    <p id="finalScoreText"></p>
+                </div>
+                <button id="nextRoundBtn" class="btn btn-primary">Ready</button>
+                <button id="quitBtn" class="btn btn-secondary">Quit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status hidden">
+        <span id="statusText"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="game.js"></script>
+    <script src="renderer.js"></script>
+    <script src="controls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
