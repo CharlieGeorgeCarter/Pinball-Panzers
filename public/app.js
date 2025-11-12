@@ -7,18 +7,19 @@ class App {
   }
 
   async init() {
-    // Setup UI event listeners
-    this.setupMenuEvents();
-    this.setupWaitingEvents();
-    this.setupGameEvents();
-
-    // Connect to server
+    // Connect to server first
     try {
       await this.game.connect();
     } catch (error) {
       console.error('Failed to connect:', error);
       alert('Failed to connect to server. Please refresh the page.');
+      return;
     }
+
+    // Setup UI event listeners after connection is established
+    this.setupMenuEvents();
+    this.setupWaitingEvents();
+    this.setupGameEvents();
   }
 
   setupMenuEvents() {
