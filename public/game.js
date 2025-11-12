@@ -48,6 +48,11 @@ class Game {
 
   createRoom() {
     return new Promise((resolve, reject) => {
+      if (!this.socket || !this.isConnected) {
+        reject('Not connected to server');
+        return;
+      }
+
       this.socket.emit('createRoom', (response) => {
         if (response.success) {
           this.roomCode = response.roomCode;
@@ -63,11 +68,36 @@ class Game {
 
   joinRoom(roomCode) {
     return new Promise((resolve, reject) => {
+      if (!this.socket || !this.isConnected) {
+        reject('Not connected to server');
+        return;
+      }
+
       this.socket.emit('joinRoom', roomCode.toUpperCase(), (response) => {
         if (response.success) {
           this.roomCode = response.roomCode;
           this.playerNumber = response.playerNumber;
           console.log('Joined room:', this.roomCode);
+          resolve(response);
+        } else {
+          reject(response.error);
+        }
+      });
+    });
+  }
+
+  createSinglePlayerRoom(difficulty) {
+    return new Promise((resolve, reject) => {
+      if (!this.socket || !this.isConnected) {
+        reject('Not connected to server');
+        return;
+      }
+
+      this.socket.emit('createSinglePlayerRoom', difficulty, (response) => {
+        if (response.success) {
+          this.roomCode = response.roomCode;
+          this.playerNumber = response.playerNumber;
+          console.log('Single player room created:', this.roomCode);
           resolve(response);
         } else {
           reject(response.error);

@@ -22,12 +22,33 @@ class App {
   }
 
   setupMenuEvents() {
+    const singlePlayerBtn = document.getElementById('singlePlayerBtn');
     const createRoomBtn = document.getElementById('createRoomBtn');
     const joinRoomBtn = document.getElementById('joinRoomBtn');
     const confirmJoinBtn = document.getElementById('confirmJoinBtn');
     const cancelJoinBtn = document.getElementById('cancelJoinBtn');
     const roomCodeInput = document.getElementById('roomCodeInput');
     const joinRoomPanel = document.getElementById('joinRoomPanel');
+    const difficultyPanel = document.getElementById('difficultyPanel');
+    const cancelDifficultyBtn = document.getElementById('cancelDifficultyBtn');
+    const easyBtn = document.getElementById('easyBtn');
+    const mediumBtn = document.getElementById('mediumBtn');
+    const hardBtn = document.getElementById('hardBtn');
+
+    // Single player button
+    singlePlayerBtn.addEventListener('click', () => {
+      difficultyPanel.classList.remove('hidden');
+      joinRoomPanel.classList.add('hidden');
+    });
+
+    // Difficulty selection
+    easyBtn.addEventListener('click', () => this.startSinglePlayer('easy'));
+    mediumBtn.addEventListener('click', () => this.startSinglePlayer('medium'));
+    hardBtn.addEventListener('click', () => this.startSinglePlayer('hard'));
+
+    cancelDifficultyBtn.addEventListener('click', () => {
+      difficultyPanel.classList.add('hidden');
+    });
 
     createRoomBtn.addEventListener('click', async () => {
       try {
@@ -41,6 +62,7 @@ class App {
 
     joinRoomBtn.addEventListener('click', () => {
       joinRoomPanel.classList.remove('hidden');
+      difficultyPanel.classList.add('hidden');
       roomCodeInput.focus();
     });
 
@@ -153,6 +175,16 @@ class App {
     quitBtn.addEventListener('click', () => {
       this.game.leaveGame();
     });
+  }
+
+  async startSinglePlayer(difficulty) {
+    try {
+      await this.game.createSinglePlayerRoom(difficulty);
+      document.getElementById('difficultyPanel').classList.add('hidden');
+      this.startGame();
+    } catch (error) {
+      alert('Failed to start single player: ' + error);
+    }
   }
 
   displayRoomCode() {

@@ -42,6 +42,26 @@ io.on('connection', (socket) => {
     callback({ success: true, roomCode, playerNumber: 1 });
   });
 
+  // Create a single player room with AI
+  socket.on('createSinglePlayerRoom', (difficulty, callback) => {
+    const roomCode = generateRoomCode();
+    const gameRoom = new GameRoom(roomCode, io, true, difficulty);
+    gameRooms.set(roomCode, gameRoom);
+
+    socket.join(roomCode);
+    gameRoom.addPlayer(socket.id, 1);
+
+    // Add AI player
+    const aiSocketId = 'AI_' + roomCode;
+    gameRoom.addPlayer(aiSocketId, 2, true);
+
+    console.log(`Single player room created: ${roomCode} (${difficulty})`);
+    callback({ success: true, roomCode, playerNumber: 1 });
+
+    // Start the game immediately
+    gameRoom.startGame();
+  });
+
   // Join an existing room
   socket.on('joinRoom', (roomCode, callback) => {
     const gameRoom = gameRooms.get(roomCode);

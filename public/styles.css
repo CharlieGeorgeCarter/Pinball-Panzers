@@ -5,9 +5,17 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
     color: #fff;
     overflow: hidden;
     touch-action: none;
@@ -97,6 +105,44 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+}
+
+.difficulty-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-difficulty {
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+.btn-easy {
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px solid #4CAF50;
+}
+
+.btn-easy:hover {
+    background: rgba(76, 175, 80, 0.5);
+}
+
+.btn-medium {
+    background: rgba(255, 193, 7, 0.3);
+    border: 2px solid #FFC107;
+}
+
+.btn-medium:hover {
+    background: rgba(255, 193, 7, 0.5);
+}
+
+.btn-hard {
+    background: rgba(244, 67, 54, 0.3);
+    border: 2px solid #f44336;
+}
+
+.btn-hard:hover {
+    background: rgba(244, 67, 54, 0.5);
 }
 
 .join-panel input {

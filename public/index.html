@@ -13,11 +13,22 @@
     <div id="menuScreen" class="screen">
         <div class="menu-container">
             <h1 class="game-title">🎮 Pinball Panzers</h1>
-            <p class="game-subtitle">Multiplayer Tank Battle</p>
+            <p class="game-subtitle">Tank Battle Game</p>
 
             <div class="menu-buttons">
-                <button id="createRoomBtn" class="btn btn-primary">Create Room</button>
+                <button id="singlePlayerBtn" class="btn btn-primary">Single Player vs AI</button>
+                <button id="createRoomBtn" class="btn btn-secondary">Create Multiplayer Room</button>
                 <button id="joinRoomBtn" class="btn btn-secondary">Join Room</button>
+            </div>
+
+            <div id="difficultyPanel" class="join-panel hidden">
+                <h3 style="margin-bottom: 15px;">Select Difficulty</h3>
+                <div class="difficulty-buttons">
+                    <button id="easyBtn" class="btn btn-difficulty btn-easy">🟢 Easy</button>
+                    <button id="mediumBtn" class="btn btn-difficulty btn-medium">🟡 Medium</button>
+                    <button id="hardBtn" class="btn btn-difficulty btn-hard">🔴 Hard</button>
+                </div>
+                <button id="cancelDifficultyBtn" class="btn btn-secondary" style="margin-top: 15px; width: 100%;">Cancel</button>
             </div>
 
             <div id="joinRoomPanel" class="join-panel hidden">
@@ -31,7 +42,7 @@
             <div class="instructions">
                 <h3>How to Play</h3>
                 <ul>
-                    <li>Create a room or join with a code</li>
+                    <li>Play against AI or with a friend</li>
                     <li>Use controls to move your tank</li>
                     <li>Tap FIRE to shoot bullets</li>
                     <li>Bullets bounce off walls (max 3 times)</li>

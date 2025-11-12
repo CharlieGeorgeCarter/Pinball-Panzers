@@ -1,10 +1,14 @@
 const MapGenerator = require('./mapGenerator');
+const AIController = require('./aiController');
 
 class GameRoom {
-  constructor(code, io) {
+  constructor(code, io, isSinglePlayer = false, aiDifficulty = 'medium') {
     this.code = code;
     this.io = io;
     this.players = new Map();
+    this.isSinglePlayer = isSinglePlayer;
+    this.aiDifficulty = aiDifficulty;
+    this.aiController = null;
     this.gameState = {
       status: 'waiting', // waiting, playing, roundEnd, gameOver
       currentMap: null,
@@ -19,11 +23,12 @@ class GameRoom {
     this.lastUpdateTime = Date.now();
   }
 
-  addPlayer(socketId, playerNumber) {
+  addPlayer(socketId, playerNumber, isAI = false) {
     this.players.set(socketId, {
       id: socketId,
       number: playerNumber,
-      ready: false
+      ready: false,
+      isAI: isAI
     });
 
     // Initialize tank for this player
@@ -67,6 +72,16 @@ class GameRoom {
     this.gameState.status = 'playing';
     this.generateNewMap();
     this.startGameLoop();
+
+    // Start AI if single player
+    if (this.isSinglePlayer) {
+      const aiSocketId = Array.from(this.players.keys()).find(id => id.startsWith('AI_'));
+      if (aiSocketId) {
+        this.aiController = new AIController(this.aiDifficulty, this, aiSocketId);
+        this.aiController.start();
+      }
+    }
+
     this.emitGameState();
   }
 
@@ -104,6 +119,11 @@ class GameRoom {
     if (this.gameLoop) {
       clearInterval(this.gameLoop);
       this.gameLoop = null;
+    }
+
+    // Stop AI
+    if (this.aiController) {
+      this.aiController.stop();
     }
   }
 
@@ -333,6 +353,14 @@ class GameRoom {
   playerReady(socketId) {
     this.readyPlayers.add(socketId);
 
+    // Auto-ready AI players
+    if (this.isSinglePlayer) {
+      const aiSocketId = Array.from(this.players.keys()).find(id => id.startsWith('AI_'));
+      if (aiSocketId) {
+        this.readyPlayers.add(aiSocketId);
+      }
+    }
+
     if (this.readyPlayers.size === this.players.size) {
       // Both players ready, start next round or new game
       if (this.gameState.status === 'gameOver') {
@@ -349,6 +377,12 @@ class GameRoom {
     this.generateNewMap();
     this.lastUpdateTime = Date.now();
     this.startGameLoop();
+
+    // Restart AI
+    if (this.isSinglePlayer && this.aiController) {
+      this.aiController.start();
+    }
+
     this.emitGameState();
   }
 
@@ -396,11 +430,22 @@ class GameRoom {
   }
 
   handleDisconnect(socketId) {
+    // Don't process AI disconnection
+    if (socketId.startsWith('AI_')) return;
+
     this.players.delete(socketId);
     delete this.gameState.tanks[socketId];
 
-    // Notify other players
-    this.io.to(this.code).emit('playerDisconnected');
+    // Stop AI if single player
+    if (this.isSinglePlayer && this.aiController) {
+      this.aiController.stop();
+    }
+
+    // Notify other players (only for multiplayer)
+    if (!this.isSinglePlayer) {
+      this.io.to(this.code).emit('playerDisconnected');
+    }
+
     this.stopGameLoop();
   }
 
